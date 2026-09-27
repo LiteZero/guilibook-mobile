@@ -1,0 +1,22 @@
+{
+  "name": "guilibook-mobile",
+  "version": "1.0.0",
+  "private": true,
+  "description": "贵礼簿移动端 APK",
+  "scripts": {
+    "prepare:web": "node scripts/prepare-web.mjs",
+    "prepare:android": "node scripts/prepare-android.mjs",
+    "cap:add": "npm run prepare:web && npx cap add android && npm run prepare:android",
+    "cap:sync": "npm run prepare:web && npm run prepare:android && npx cap sync android",
+    "android:debug": "npm run cap:sync && cd android && gradlew.bat assembleDebug"
+  },
+  "dependencies": {
+    "@capacitor/android": "^6.2.0",
+    "@capacitor/core": "^6.2.0",
+    "@capacitor/filesystem": "^6.0.2",
+    "@capacitor/share": "^6.0.2"
+  },
+  "devDependencies": {
+    "@capacitor/cli": "^6.2.0"
+  }
+}

@@ -1,0 +1,164 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#1167e8" />
+    <title>贵礼簿 · 电子人情账本</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <div class="app-shell">
+      <header class="topbar">
+        <div class="topbar-inner">
+          <a class="brand" href="#home" aria-label="贵礼簿首页">
+            <span class="brand-mark"><span></span><span></span><span></span></span>
+            <span>
+              <strong>贵礼簿</strong>
+              <small>电子人情账本</small>
+            </span>
+          </a>
+          <nav class="main-nav" aria-label="主导航">
+            <button class="nav-link is-active" data-view="home">首页</button>
+            <button class="nav-link" data-view="receive">收礼</button>
+            <button class="nav-link" data-view="send">送礼</button>
+            <button class="nav-link" data-view="friends">亲友往来</button>
+          </nav>
+          <div class="topbar-actions">
+            <button class="ghost-button" id="jsonImportButton" title="绑定根目录下的 data.json 文件">绑定 data.json</button>
+            <input id="jsonImportInput" type="file" accept="application/json,.json" hidden />
+            <button class="ghost-button" id="jsonExportButton" title="保存到 data.json 文件">保存 data.json</button>
+            <button class="avatar" id="profileButton" title="当前账本">我</button>
+          </div>
+        </div>
+      </header>
+
+      <main class="page-wrap">
+        <section class="view" id="homeView">
+          <div class="welcome-row">
+            <div>
+              <p class="eyebrow">我的礼簿 <span id="recordCountLabel">0 条记录</span></p>
+              <h1>把每一份人情，<em>记得清楚</em></h1>
+              <p class="subcopy">收礼、送礼和亲友往来，一本礼簿就能查清楚。</p>
+            </div>
+            <button class="primary-button large" data-open-form="receive"><span class="plus">＋</span> 记一笔收礼</button>
+          </div>
+
+          <div class="summary-grid" id="summaryGrid"></div>
+
+          <div class="content-grid">
+            <section class="panel records-panel">
+              <div class="panel-heading">
+                <div>
+                  <p class="panel-kicker">最近记录</p>
+                  <h2>礼金流水</h2>
+                </div>
+                <div class="panel-heading-actions">
+                  <button class="text-button" data-view="receive">查看全部 <span>→</span></button>
+                </div>
+              </div>
+              <div class="table-wrap">
+                <table class="records-table">
+                  <thead><tr><th>亲友</th><th>类型</th><th>场合</th><th>日期</th><th class="align-right">金额</th><th></th></tr></thead>
+                  <tbody id="recentRecordsBody"></tbody>
+                </table>
+                <div class="empty-state compact" id="recentEmpty" hidden>
+                  <span class="empty-icon">✦</span>
+                  <p>还没有礼金记录</p>
+                  <button class="text-button" data-open-form="receive">先记一笔收礼 →</button>
+                </div>
+              </div>
+            </section>
+
+            <section class="panel balance-panel">
+              <div class="panel-heading">
+                <div>
+                  <p class="panel-kicker">亲友关系</p>
+                  <h2>往来差额</h2>
+                </div>
+                <button class="icon-button" data-view="friends" aria-label="查看全部亲友">•••</button>
+              </div>
+              <div class="balance-list" id="homeBalanceList"></div>
+              <div class="empty-state compact" id="balanceEmpty" hidden>
+                <span class="empty-icon">♧</span>
+                <p>录入收礼或送礼后，这里会自动统计</p>
+              </div>
+              <button class="secondary-button full-width" data-open-form="send"><span class="plus">＋</span> 记一笔送礼</button>
+            </section>
+          </div>
+
+          <section class="tips-strip">
+            <div class="tip-icon">✦</div>
+            <div><strong>一人录礼，全家共享</strong><span>浏览器可绑定根目录 data.json；APK 会保存到应用数据目录。</span></div>
+            <button class="text-button" id="tipsExportButton">保存 data.json →</button>
+          </section>
+        </section>
+
+        <section class="view" id="recordsView" hidden>
+          <div class="page-title-row">
+            <div><p class="eyebrow" id="recordsEyebrow">收礼记录</p><h1 id="recordsTitle">收礼</h1><p class="subcopy">登记每一笔礼金，之后按姓名快速查找。</p></div>
+            <button class="primary-button" id="recordsAddButton" data-open-form="receive"><span class="plus">＋</span> 新增记录</button>
+          </div>
+          <section class="panel full-panel">
+            <div class="toolbar">
+              <div class="segmented-control" role="tablist" aria-label="记录类型">
+                <button class="segment is-active" data-record-filter="receive">收礼</button>
+                <button class="segment" data-record-filter="send">送礼</button>
+              </div>
+              <label class="search-box"><span>⌕</span><input id="recordsSearch" type="search" placeholder="搜索姓名、场合或备注" /></label>
+              <button class="secondary-button" id="recordsExportButton">导出 Excel</button>
+            </div>
+            <div class="table-wrap records-table-large">
+              <table class="records-table">
+                <thead><tr><th>亲友</th><th>场合</th><th>日期</th><th>备注</th><th class="align-right">金额</th><th class="actions-heading">操作</th></tr></thead>
+                <tbody id="allRecordsBody"></tbody>
+              </table>
+              <div class="empty-state" id="recordsEmpty" hidden><span class="empty-icon">✦</span><h3>还没有这类记录</h3><p>点击右上角新增一笔，让礼簿开始工作。</p></div>
+            </div>
+          </section>
+        </section>
+
+        <section class="view" id="friendsView" hidden>
+          <div class="page-title-row">
+            <div><p class="eyebrow">亲友往来</p><h1>差额一目了然</h1><p class="subcopy">根据收礼和送礼自动计算彼此往来的礼金差额。</p></div>
+            <button class="secondary-button" id="friendsExportButton">导出往来 Excel</button>
+          </div>
+          <section class="panel full-panel">
+            <div class="toolbar friends-toolbar"><div class="toolbar-note"><span class="status-dot"></span> 已按往来金额排序</div><label class="search-box"><span>⌕</span><input id="friendsSearch" type="search" placeholder="搜索亲友姓名" /></label></div>
+            <div class="friends-grid" id="friendsGrid"></div>
+            <div class="empty-state" id="friendsEmpty" hidden><span class="empty-icon">♧</span><h3>还没有亲友往来</h3><p>录入第一笔收礼或送礼，系统会自动建立亲友档案。</p></div>
+          </section>
+        </section>
+      </main>
+
+      <nav class="mobile-bottom-nav" aria-label="移动端主导航">
+        <button class="mobile-nav-item is-active" data-view="home"><span class="mobile-nav-icon">⌂</span><span>首页</span></button>
+        <button class="mobile-nav-item" data-view="receive"><span class="mobile-nav-icon">↙</span><span>收礼</span></button>
+        <button class="mobile-nav-item mobile-nav-add" data-open-form="receive" aria-label="新增收礼"><span>＋</span></button>
+        <button class="mobile-nav-item" data-view="send"><span class="mobile-nav-icon">↗</span><span>送礼</span></button>
+        <button class="mobile-nav-item" data-view="friends"><span class="mobile-nav-icon">♧</span><span>亲友</span></button>
+      </nav>
+    </div>
+
+    <div class="modal-backdrop" id="recordModal" hidden>
+      <section class="modal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+        <div class="modal-head"><div><p class="panel-kicker">礼簿记录</p><h2 id="modalTitle">新增收礼</h2></div><button class="close-button" id="closeModal" aria-label="关闭">×</button></div>
+        <form id="recordForm">
+          <input id="recordId" type="hidden" />
+          <div class="form-type-toggle" role="tablist"><button type="button" class="type-choice is-active" data-form-type="receive">收礼</button><button type="button" class="type-choice" data-form-type="send">送礼</button></div>
+          <div class="form-grid">
+            <label class="field full"><span>亲友姓名 <i>*</i></span><input id="personName" required maxlength="30" placeholder="例如：张三" /></label>
+            <label class="field"><span>礼金金额 <i>*</i></span><div class="amount-input"><b>¥</b><input id="amount" required type="number" min="0.01" step="0.01" placeholder="0.00" /></div></label>
+            <label class="field"><span>日期</span><input id="recordDate" type="date" /></label>
+            <label class="field"><span>场合</span><select id="occasion"><option>婚礼</option><option>生日</option><option>满月</option><option>升学</option><option>乔迁</option><option>探病</option><option>丧事</option><option>其他</option></select></label>
+            <label class="field"><span>备注</span><input id="note" maxlength="80" placeholder="可填写桌号、地点等信息" /></label>
+          </div>
+          <div class="modal-foot"><button type="button" class="secondary-button" id="cancelModal">取消</button><button type="submit" class="primary-button">保存记录</button></div>
+        </form>
+      </section>
+    </div>
+
+    <div class="toast" id="toast" role="status" aria-live="polite"></div>
+    <script src="app.js"></script>
+  </body>
+</html>
