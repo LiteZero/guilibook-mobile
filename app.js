@@ -122,7 +122,7 @@
       if ((record.date || '') > (current.lastDate || '')) current.lastDate = record.date;
       map.set(record.name, current);
     });
-    return [...map.values()].map((person) => ({ ...person, balance: person.receive - person.send })).sort((a, b) => Math.abs(b.balance) - Math.abs(a.balance) || a.name.localeCompare(b.name, 'zh-CN'));
+    return [...map.values()].map((person) => ({ ...person, balance: person.send - person.receive })).sort((a, b) => Math.abs(b.balance) - Math.abs(a.balance) || a.name.localeCompare(b.name, 'zh-CN'));
   }
 
   function render() {
@@ -136,7 +136,7 @@
 
   function renderSummary() {
     const total = totals();
-    const balance = total.receive - total.send;
+    const balance = total.send - total.receive;
     const cards = [
       ['收礼总额', total.receive, 'receive', '收到的礼金总计'],
       ['送礼总额', total.send, 'send', '送出的礼金总计'],
