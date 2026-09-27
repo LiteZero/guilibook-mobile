@@ -90,6 +90,21 @@
     return [...records].sort((a, b) => `${b.date || ''}${b.createdAt || ''}`.localeCompare(`${a.date || ''}${a.createdAt || ''}`));
   }
 
+  function renderPersonNameSuggestions() {
+    const suggestions = $('#personNameSuggestions');
+    if (!suggestions) return;
+    const names = [];
+    const seen = new Set();
+    sortedRecords().forEach((record) => {
+      const name = String(record.name || '').trim();
+      if (name && !seen.has(name)) {
+        seen.add(name);
+        names.push(name);
+      }
+    });
+    suggestions.innerHTML = names.map((name) => `<option value="${escapeHtml(name)}"></option>`).join('');
+  }
+
   function totals() {
     return data.records.reduce((result, record) => {
       result[record.type] += Number(record.amount) || 0;
@@ -138,7 +153,7 @@
   }
 
   function recordRow(record) {
-    return `<tr><td><div class="person-cell"><span class="person-avatar">${escapeHtml(initials(record.name))}</span>${escapeHtml(record.name)}</div></td><td><span class="type-badge ${record.type}">${record.type === 'receive' ? '收礼' : '送礼'}</span></td><td>${escapeHtml(record.occasion || '其他')}</td><td>${shortDate(record.date)}</td><td class="align-right amount ${record.type}">${record.type === 'receive' ? '+' : '-'}¥${money(record.amount)}</td><td class="row-actions"><button class="row-action" data-edit-record="${escapeHtml(record.id)}">编辑</button><button class="row-action delete" data-delete-record="${escapeHtml(record.id)}">删除</button></td></tr>`;
+    return `<tr><td><div class="person-cell"><span class="person-avatar">${escapeHtml(initials(record.name))}</span>${escapeHtml(record.name)}</div></td><td><span class="type-badge ${record.type}">${record.type === 'receive' ? '收礼' : '送礼'}</span></td><td>${escapeHtml(record.occasion || '其他')}</td><td>${shortDate(record.date)}</td><td class="align-right amount ${record.type}">${record.type === 'receive' ? '+' : '-'}¥${money(record.amount)}</td><td class="row-actions"><button class="row-action" data-edit-record="${escapeHtml(record.id)}" aria-label="编辑" title="编辑"></button><button class="row-action delete" data-delete-record="${escapeHtml(record.id)}" aria-label="删除" title="删除"></button></td></tr>`;
   }
 
   function renderHomeBalances() {
@@ -156,7 +171,7 @@
   function renderAllRecords() {
     const query = ($('#recordsSearch')?.value || '').trim().toLowerCase();
     const records = sortedRecords(data.records.filter((record) => record.type === recordFilter)).filter((record) => [record.name, record.occasion, record.note].join(' ').toLowerCase().includes(query));
-    $('#allRecordsBody').innerHTML = records.map((record) => `<tr><td><div class="person-cell"><span class="person-avatar">${escapeHtml(initials(record.name))}</span>${escapeHtml(record.name)}</div></td><td>${escapeHtml(record.occasion || '其他')}</td><td>${fullDate(record.date)}</td><td>${escapeHtml(record.note || '—')}</td><td class="align-right amount ${record.type}">${record.type === 'receive' ? '+' : '-'}¥${money(record.amount)}</td><td class="row-actions"><button class="row-action" data-edit-record="${escapeHtml(record.id)}">编辑</button><button class="row-action delete" data-delete-record="${escapeHtml(record.id)}">删除</button></td></tr>`).join('');
+    $('#allRecordsBody').innerHTML = records.map((record) => `<tr><td><div class="person-cell"><span class="person-avatar">${escapeHtml(initials(record.name))}</span>${escapeHtml(record.name)}</div></td><td>${escapeHtml(record.occasion || '其他')}</td><td>${fullDate(record.date)}</td><td>${escapeHtml(record.note || '—')}</td><td class="align-right amount ${record.type}">${record.type === 'receive' ? '+' : '-'}¥${money(record.amount)}</td><td class="row-actions"><button class="row-action" data-edit-record="${escapeHtml(record.id)}" aria-label="编辑" title="编辑"></button><button class="row-action delete" data-delete-record="${escapeHtml(record.id)}" aria-label="删除" title="删除"></button></td></tr>`).join('');
     $('#recordsEmpty').hidden = records.length > 0;
   }
 
@@ -173,7 +188,7 @@
   function setView(view) {
     activeView = view;
     $$('.view').forEach((section) => { section.hidden = !section.id.startsWith(view === 'home' ? 'home' : view === 'friends' ? 'friends' : 'records'); });
-    $$('.nav-link, .mobile-nav-item[data-view]').forEach((button) => button.classList.toggle('is-active', button.dataset.view === view || (view === 'receive' && button.dataset.view === 'receive') || (view === 'send' && button.dataset.view === 'send')));
+    $$('.mobile-nav-item[data-view]').forEach((button) => button.classList.toggle('is-active', button.dataset.view === view || (view === 'receive' && button.dataset.view === 'receive') || (view === 'send' && button.dataset.view === 'send')));
     if (view === 'receive' || view === 'send') { recordFilter = view; updateRecordFilterButtons(); $('#recordsEyebrow').textContent = view === 'receive' ? '收礼记录' : '送礼记录'; $('#recordsTitle').textContent = view === 'receive' ? '收礼' : '送礼'; $('#recordsAddButton').dataset.openForm = view; }
     if (view === 'home') window.location.hash = 'home'; else window.location.hash = view;
     renderAllRecords();
@@ -185,6 +200,7 @@
     editingId = record?.id || null; formType = record?.type || type;
     $('#modalTitle').textContent = editingId ? '编辑记录' : formType === 'receive' ? '新增收礼' : '新增送礼';
     $('#recordId').value = editingId || '';
+    renderPersonNameSuggestions();
     $('#personName').value = record?.name || '';
     $('#amount').value = record?.amount ?? '';
     $('#recordDate').value = record?.date || today;
