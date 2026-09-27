@@ -395,7 +395,7 @@
   $('#jsonExportButton').addEventListener('click', exportJson); $('#tipsExportButton').addEventListener('click', exportJson); $('#jsonImportButton').addEventListener('click', bindJsonFile); $('#jsonImportInput').addEventListener('change', (event) => importJson(event.target.files[0]));
   $('#recordsExportButton').addEventListener('click', () => exportExcel(sortedRecords(data.records.filter((record) => record.type === recordFilter)))); $('#friendsExportButton').addEventListener('click', () => exportExcel(sortedRecords()));
   $('#recordsSearch').addEventListener('input', renderAllRecords); $('#friendsSearch').addEventListener('input', renderFriends);
-  $('#profileButton').addEventListener('click', () => showToast('当前数据保存在本机浏览器')); window.addEventListener('keydown', (event) => { if (event.key === 'Escape' && !$('#recordModal').hidden) closeForm(); });
+  window.addEventListener('keydown', (event) => { if (event.key === 'Escape' && !$('#recordModal').hidden) closeForm(); });
 
   const hashView = window.location.hash.slice(1); if (['receive', 'send', 'friends'].includes(hashView)) setView(hashView); else setView('home'); render(); hydratePersistentData();
 })();

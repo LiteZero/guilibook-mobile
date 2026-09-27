@@ -25,10 +25,9 @@
             <button class="nav-link" data-view="friends">亲友往来</button>
           </nav>
           <div class="topbar-actions">
-            <button class="ghost-button" id="jsonImportButton" title="绑定根目录下的 data.json 文件">绑定 data.json</button>
+            <button class="ghost-button" id="jsonImportButton" title="绑定根目录下的 data.json 文件"><span class="action-wide">绑定 data.json</span><span class="action-short">绑定</span></button>
             <input id="jsonImportInput" type="file" accept="application/json,.json" hidden />
-            <button class="ghost-button" id="jsonExportButton" title="保存到 data.json 文件">保存 data.json</button>
-            <button class="avatar" id="profileButton" title="当前账本">我</button>
+            <button class="ghost-button" id="jsonExportButton" title="保存到 data.json 文件"><span class="action-wide">保存 data.json</span><span class="action-short">备份</span></button>
           </div>
         </div>
       </header>
@@ -41,7 +40,7 @@
               <h1>把每一份人情，<em>记得清楚</em></h1>
               <p class="subcopy">收礼、送礼和亲友往来，一本礼簿就能查清楚。</p>
             </div>
-            <button class="primary-button large" data-open-form="receive"><span class="plus">＋</span> 记一笔收礼</button>
+            <button class="primary-button large" data-open-form="receive"><span class="plus">＋</span> 记一笔</button>
           </div>
 
           <div class="summary-grid" id="summaryGrid"></div>
@@ -65,7 +64,7 @@
                 <div class="empty-state compact" id="recentEmpty" hidden>
                   <span class="empty-icon">✦</span>
                   <p>还没有礼金记录</p>
-                  <button class="text-button" data-open-form="receive">先记一笔收礼 →</button>
+                  <button class="text-button" data-open-form="receive">先记一笔 →</button>
                 </div>
               </div>
             </section>
